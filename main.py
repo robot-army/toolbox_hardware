@@ -1,6 +1,15 @@
 import serial
 import time
+import picamera
+import PIL.Image
+import PIL.ExifTags
 
+
+def open_camera():
+    camera = picamera.PiCamera()
+    camera.resolution = (1024, 768)
+    camera.start_preview()
+    return camera
 
 def open_port(port):
     ser = serial.Serial(port,9600)
@@ -12,14 +21,26 @@ def open_port(port):
 def set_brightness(brightness, ser):
     ser.write(str(brightness).encode('utf-8'))
 
-def take_photo(ISO, blah):
-    print("Taking a photo with iso" + str(ISO) + "blah" + blah)
+def take_photo(ISO, blah,camera):
+    print("Taking a photo with iso " + str(ISO) + " blah " + blah +" but not really ")
+    camera.exif_tags['IFD0.Artist'] = 'Me!'
+    camera.exif_tags['IFD0.Copyright'] = 'Copyright (c) 2013 Me!'
+    camera.capture('foo.jpg')
 
 
-take_photo(200,'asdf')
+cameranew = open_camera()
+time.sleep(2) 
 
+take_photo(200,'asdf',cameranew)
 
-""" ser = open_port('/dev/ttyUSB0')
+img = PIL.Image.open('foo.jpg')
+exif = {
+    PIL.ExifTags.TAGS[k]: v
+    for k, v in img._getexif().items()
+    if k in PIL.ExifTags.TAGS
+}
+print(exif)
+ser = open_port('/dev/ttyUSB0')
 
 set_brightness(50, ser)
 
@@ -29,7 +50,8 @@ set_brightness(100, ser)
 
 time.sleep(1)
 
-set_brightness(40, ser) """
+set_brightness(40, ser) 
+
 
 
 
