@@ -1,3 +1,4 @@
 2) make the take_photo routine actually do something
 3) make the take_photo routine set EXIF data on the photos that makes sense
-
+4) Mount the camera on real hardware
+5) Find the right settings to cycle through
