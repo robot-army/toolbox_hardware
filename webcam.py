@@ -1,13 +1,25 @@
 import cv2
+import os
+import datetime
 
 
 def show_webcam(mirror=False):
-    cam = cv2.VideoCapture(3)
-    cam1 = cv2.VideoCapture(1)
-    cam2 = cv2.VideoCapture(0)
 
+    mydir = os.path.join(os.getcwd(), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    os.makedirs(mydir)
+
+    cam = cv2.VideoCapture(4) # picam, max res 2592 1944
+    cam1 = cv2.VideoCapture(2) # webcam 1, max res 1920 1080
+    cam2 = cv2.VideoCapture(0) # webcam 0, max res 1920 1080
+
+
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944)
     cam1.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     cam1.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    cam2.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    cam2.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
     while True:
         ret_val, img = cam.read()
         ret_val1, img1 = cam1.read()
@@ -24,9 +36,15 @@ def show_webcam(mirror=False):
         if key != -1 :
             print(key)
         if key == 27: 
-            cv2.imwrite('test.jpg', img)
-            cv2.imwrite('test1.jpg', img1)
-            cv2.imwrite('test2.jpg', img2)
+            i = 0
+            while os.path.exists(mydir+"/camera1_%s.jpg" % i):
+                i += 1
+
+            cv2.imwrite(mydir+'/camera1_'+str(i)+'.jpg', img)
+            cv2.imwrite(mydir+'/camera2_'+str(i)+'.jpg', img1)
+            cv2.imwrite(mydir+'/camera3_'+str(i)+'.jpg', img2)
+            print("Saved images")
+
  
         if key == 113:
             break
